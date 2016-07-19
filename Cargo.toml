@@ -1,0 +1,10 @@
+[package]
+authors = ["Scott Olson <scott@solson.me>"]
+name = "rsokoban"
+version = "0.1.0"
+
+[dependencies]
+bit-set = "0.4.0"
+cgmath = "0.10.0"
+glium = "0.15.0"
+time = "0.1.35"

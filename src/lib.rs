@@ -3,7 +3,7 @@ extern crate cgmath;
 #[macro_use] extern crate glium;
 extern crate time;
 
-mod board;
+pub mod board;
 mod camera;
 mod render;
 pub mod units;

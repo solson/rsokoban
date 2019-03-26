@@ -5,19 +5,38 @@ use std::vec::IntoIter;
 #[derive(Clone, Debug)]
 pub struct Board<T> {
     cells: Vec<T>,
-    width: u32,
-    height: u32,
+    width: usize,
+    height: usize,
+}
+
+#[derive(Clone, Copy, Debug)]
+#[repr(u8)]
+pub enum Cell {
+    Wall         = b'#',
+    Player       = b'@',
+    PlayerOnGoal = b'+',
+    Box          = b'$',
+    BoxOnGoal    = b'*',
+    Goal         = b'.',
+    Floor        = b' ',
+}
+
+impl Default for Cell {
+    fn default() -> Cell {
+        Cell::Floor
+    }
+}
+
+impl Board<Cell> {
+    pub fn dump_ascii(&self) {
+        for line in self.cells.chunks(self.width) {
+            for &b in line { print!("{}", b as u8 as char); }
+            print!("\n");
+        }
+    }
 }
 
 impl Board<bool> {
-    pub fn new(width: usize, height: usize) -> Self {
-        Board {
-            cells: vec![false; width * height],
-            width: width as u32,
-            height: height as u32,
-        }
-    }
-
     pub fn new_test_board() -> Self {
         let mut board = Board::new(2, 3);
         board[2][0] = true;
@@ -26,12 +45,22 @@ impl Board<bool> {
         board[2][1] = true;
         board
     }
+}
 
-    pub fn height(&self) -> u32 {
+impl<T> Board<T> {
+    pub fn new(width: usize, height: usize) -> Self where T: Clone + Default {
+        Board {
+            cells: vec![T::default(); width * height],
+            width: width,
+            height: height,
+        }
+    }
+
+    pub fn height(&self) -> usize {
         self.height
     }
 
-    pub fn width(&self) -> u32 {
+    pub fn width(&self) -> usize {
         self.width
     }
 }
@@ -40,15 +69,15 @@ impl<T> Index<usize> for Board<T> {
     type Output = [T];
 
     fn index(&self, index: usize) -> &Self::Output {
-        let start = index * self.width as usize;
-        &self.cells[start..start + self.width as usize]
+        let start = index * self.width;
+        &self.cells[start..start + self.width]
     }
 }
 
 impl<T> IndexMut<usize> for Board<T> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        let start = index * self.width as usize;
-        &mut self.cells[start..start + self.width as usize]
+        let start = index * self.width;
+        &mut self.cells[start..start + self.width]
     }
 }
 
